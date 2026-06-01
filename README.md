@@ -149,12 +149,14 @@ For nested layouts, the innermost matching layout takes priority. In this exampl
 
 ## Note
 
-This extension overrides the default values of these attributes:
+`hx-layout` overrides the default values of these attributes on child elements:
 
-| Attribute | htmx default | extension default |
+| Attribute | htmx default | `hx-layout` default |
 |---|---|---|
 | `hx-target` | `this` | `outlet` |
 | `hx-select` | entire response document | same as `hx-target` |
+
+Elements outside `hx-layout` keep the htmx defaults.
 
 Set `hx-target` explicitly to bypass the outlet default:
 
