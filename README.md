@@ -5,7 +5,7 @@
 
 Define route-based layouts for [htmx](https://htmx.org) and automatically boost matching links and forms without writing `hx-target` selectors on every element.
 
-Unlike plain `hx-boost`, `hx-layout` keeps the surrounding layout and swaps only the matching `hx-outlet`.
+Unlike plain `hx-boost`, `hx-layout` keeps the surrounding layout and swaps only the matching `hx-outlet`. It makes `hx-boost` safer by boosting only links and forms that match the layout route. Those routes are expected to share the same layout.
 
 *No more query selectors.*
 
