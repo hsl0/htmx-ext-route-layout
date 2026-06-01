@@ -23,6 +23,8 @@
   "author": "hsl0",
   "type": "module",
   "main": "dist/index.js",
+  "jsdelivr": "dist/index.min.js",
+  "unpkg": "dist/index.min.js",
   "directories": {
     "test": "test"
   },
