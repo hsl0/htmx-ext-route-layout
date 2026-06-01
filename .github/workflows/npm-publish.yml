@@ -9,11 +9,8 @@ on:
       - published
 
 jobs:
-  lint:
-    uses: ./.github/workflows/eslint.yml
-
   build:
-    uses: ./.github/workflows/tsc.yml
+    uses: ./.github/workflows/rollup.yml
 
   test:
     uses: ./.github/workflows/vitest.yml
@@ -22,7 +19,6 @@ jobs:
     needs:
       - build
       - test
-      - lint
     permissions:
       id-token: write # Required for OIDC
       contents: read
