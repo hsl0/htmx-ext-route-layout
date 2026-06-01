@@ -1,6 +1,10 @@
 # htmx-ext-route-layout
 
+> Why should you only be able to replace the entire screen?
+
 Define route-based layouts for [htmx](https://htmx.org) and automatically boost matching links and forms without writing `hx-target` selectors on every element.
+
+Unlike plain `hx-boost`, `hx-layout` keeps the surrounding layout and swaps only the matching `hx-outlet`.
 
 *No more query selectors.*
 
