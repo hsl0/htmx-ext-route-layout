@@ -1,7 +1,7 @@
 {
   "name": "htmx-ext-route-layout",
   "version": "0.1.0",
-  "description": "Layout-aware htmx booster",
+  "description": "Layout-aware boosted navigation for htmx",
   "keywords": [
     "htmx",
     "router",
