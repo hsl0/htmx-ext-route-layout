@@ -1,7 +1,7 @@
 {
   "name": "htmx-ext-route-layout",
   "version": "0.1.0",
-  "description": "Route-based layouts for htmx. No more query selectors.",
+  "description": "Layout-aware htmx booster",
   "keywords": [
     "htmx",
     "router",
