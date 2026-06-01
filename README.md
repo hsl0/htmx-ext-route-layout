@@ -82,6 +82,14 @@ URL hash fragments are ignored when comparing locations, and search parameters a
 
 `hx-class:active` does not compute the initial active state. Mark it explicitly in the HTML. After a boosted swap, it updates links inside the affected layout while preserving active state outside it.
 
+## Headers
+
+### `HX-Select`
+
+The extension sends the effective `hx-select` value as the `HX-Select` request header. Servers can use this header to return only the selected fragment instead of rendering the full document.
+
+The value can contain multiple comma-separated selectors. For boosted links and forms, htmx may include `head` as an additional selector, for example `#content, head`.
+
 ## Examples
 
 ### Layout with navigation outside the outlet
