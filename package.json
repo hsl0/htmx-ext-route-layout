@@ -1,0 +1,30 @@
+{
+  "name": "htmx-ext-route-layout",
+  "version": "0.1.0",
+  "description": "Route-based layouts for htmx. No more query selectors.",
+  "license": "MIT",
+  "author": "hsl0",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "check": "tsc --noEmit",
+    "build:tsc": "tsc",
+    "build:rollup": "rollup -c",
+    "build": "npm run check && npm run build:rollup"
+  },
+  "devDependencies": {
+    "@rollup/plugin-terser": "^1.0.0",
+    "@rollup/plugin-typescript": "^12.3.0",
+    "happy-dom": "^20.9.0",
+    "rollup": "^4.60.4",
+    "tslib": "^2.8.1",
+    "typescript": "^6.0.3",
+    "urlpattern-polyfill": "^10.1.0",
+    "vitest": "^4.1.7"
+  },
+  "peerDependencies": {
+    "htmx.org": "^2.0.10"
+  }
+}
