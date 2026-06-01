@@ -1,13 +1,10 @@
 # htmx-ext-route-layout
 
 > Why should you only be able to replace the **entire** screen?
+> 
 > *-- [htmx.org](https://htmx.org)*
 
-Define route-based layouts for [htmx](https://htmx.org) and automatically boost matching links and forms without writing `hx-target` selectors on every element.
-
-Unlike plain `hx-boost`, `hx-layout` keeps the surrounding layout and swaps only the matching `hx-outlet`. It makes `hx-boost` safer by boosting only links and forms that match the layout route. Those routes are expected to share the same layout.
-
-*No more query selectors.*
+`route-layout` extension makes [htmx](https://htmx.org) boosted navigation layout-aware. A layout route predicts which destination pages share the same layout, allowing matching links and forms to swap only the corresponding outlet instead of the whole page.
 
 ## Quickstart
 
@@ -24,7 +21,7 @@ Add htmx and the extension scripts:
 ></script>
 ```
 
-Enable the extension on any ancestor element:
+Declare a layout route and an outlet:
 
 ```html
 <!-- /example/home -->
@@ -91,7 +88,7 @@ URL hash fragments are ignored when comparing locations, and search parameters a
 
 ### `HX-Select`
 
-The extension sends the effective `hx-select` value as the `HX-Select` request header. Servers can use this header to return only the selected fragment instead of rendering the full document.
+The extension sends the effective `hx-select` value as the `HX-Select` request header. Servers can use this header to return only the selected fragment instead of the full document.
 
 The value can contain multiple comma-separated selectors. For boosted links and forms, htmx may include `head` as an additional selector, for example `#content, head`.
 
@@ -162,7 +159,7 @@ For nested layouts, the innermost matching layout takes priority. In this exampl
 
 ## Note
 
-`hx-layout` overrides the default values of these attributes on child elements:
+`hx-layout` overrides the default values of these attributes on matching child elements:
 
 | Attribute | htmx default | `hx-layout` default |
 |---|---|---|
