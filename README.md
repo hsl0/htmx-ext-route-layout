@@ -1,6 +1,7 @@
 # htmx-ext-route-layout
 
-> Why should you only be able to replace the entire screen?
+> Why should you only be able to replace the **entire** screen?
+> *-- [htmx.org](https://htmx.org)*
 
 Define route-based layouts for [htmx](https://htmx.org) and automatically boost matching links and forms without writing `hx-target` selectors on every element.
 
