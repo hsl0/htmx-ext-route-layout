@@ -45,7 +45,7 @@ function fireBeforeProcessNode(el: Element) {
 	capturedOnEvent?.('htmx:beforeProcessNode', { detail: { elt: el } });
 }
 
-const { processLayout, setDefaultTarget, boostForRoute, urlEquals } =
+const { processLayout, setDefaultTarget, boostForRoute, urlEquals, testURLPattern } =
 	await import('../src/index.js');
 
 beforeEach(() => {
@@ -268,11 +268,11 @@ describe('processLayout', () => {
 describe('route search parameters', () => {
 	it('requires matching search parameters defined in the route pattern', () => {
 		document.body.innerHTML = `
-			<div hx-layout="/app/*?tab=settings">
+			<div hx-layout="/app/*\\?tab=settings">
 				<a id="match" href="http://localhost/app/page?tab=settings&extra=1"></a>
 				<a id="missing" href="http://localhost/app/page"></a>
 				<a id="different" href="http://localhost/app/page?tab=profile"></a>
-				<div id="outlet" hx-outlet="/app/*?tab=settings"></div>
+				<div id="outlet" hx-outlet="/app/*\\?tab=settings"></div>
 			</div>`;
 		processLayout(document.querySelector('[hx-layout]')!);
 
@@ -287,10 +287,10 @@ describe('route search parameters', () => {
 
 	it('supports a single * wildcard for search parameter presence', () => {
 		document.body.innerHTML = `
-			<div hx-layout="/app/*?token=*">
+			<div hx-layout="/app/*\\?token=*">
 				<a id="match" href="http://localhost/app/page?token=abc"></a>
 				<a id="missing" href="http://localhost/app/page"></a>
-				<div id="outlet" hx-outlet="/app/*?token=*"></div>
+				<div id="outlet" hx-outlet="/app/*\\?token=*"></div>
 			</div>`;
 		processLayout(document.querySelector('[hx-layout]')!);
 
@@ -302,10 +302,10 @@ describe('route search parameters', () => {
 
 	it('does not treat prefix or suffix search parameter wildcards as patterns', () => {
 		document.body.innerHTML = `
-			<div hx-layout="/app/*?q=aaa*">
+			<div hx-layout="/app/*\\?q=aaa*">
 				<a id="literal" href="http://localhost/app/page?q=aaa*"></a>
 				<a id="prefix" href="http://localhost/app/page?q=aaabbb"></a>
-				<div id="outlet" hx-outlet="/app/*?q=aaa*"></div>
+				<div id="outlet" hx-outlet="/app/*\\?q=aaa*"></div>
 			</div>`;
 		processLayout(document.querySelector('[hx-layout]')!);
 
@@ -449,6 +449,95 @@ describe('urlEquals', () => {
 	it('resolves relative URLs against location', () => {
 		expect(urlEquals('/app/dashboard', '/app/dashboard')).toBe(true);
 		expect(urlEquals('/app/dashboard', '/app/settings')).toBe(false);
+	});
+});
+
+// ---------------------------------------------------------------------------
+
+describe('testURLPattern', () => {
+	describe('pathname matching', () => {
+		it('matches exact pathname', () => {
+			expect(testURLPattern('/app/dashboard', 'http://localhost/app/dashboard')).toBe(true);
+		});
+
+		it('does not match different pathname', () => {
+			expect(testURLPattern('/app/dashboard', 'http://localhost/app/settings')).toBe(false);
+		});
+
+		it('matches with wildcard segment', () => {
+			expect(testURLPattern('/app/*', 'http://localhost/app/dashboard')).toBe(true);
+		});
+
+		it('does not match when wildcard segment is missing', () => {
+			expect(testURLPattern('/app/*', 'http://localhost/app')).toBe(false);
+		});
+	});
+
+	describe('origin filtering', () => {
+		it('does not match URL from a different hostname', () => {
+			expect(testURLPattern('/app/*', 'http://example.com/app/dashboard')).toBe(false);
+		});
+
+		it('does not match URL from a different protocol', () => {
+			expect(testURLPattern('/app/*', 'https://localhost/app/dashboard')).toBe(false);
+		});
+
+		it('resolves relative pattern URL against location.href', () => {
+			expect(testURLPattern('/app/page', '/app/page')).toBe(true);
+		});
+	});
+
+	describe('search parameter matching', () => {
+		it('matches URL that has no params when pattern has none', () => {
+			expect(testURLPattern('/app/*', 'http://localhost/app/page')).toBe(true);
+		});
+
+		it('matches URL with extra params when pattern has none', () => {
+			expect(testURLPattern('/app/*', 'http://localhost/app/page?extra=1')).toBe(true);
+		});
+
+		it('requires param defined in pattern to be present', () => {
+			expect(testURLPattern('/app/*\\?tab=settings', 'http://localhost/app/page?tab=settings')).toBe(true);
+			expect(testURLPattern('/app/*\\?tab=settings', 'http://localhost/app/page')).toBe(false);
+		});
+
+		it('requires exact param value match', () => {
+			expect(testURLPattern('/app/*\\?tab=settings', 'http://localhost/app/page?tab=profile')).toBe(false);
+		});
+
+		it('matches when URL has additional params beyond those in pattern', () => {
+			expect(testURLPattern('/app/*\\?tab=settings', 'http://localhost/app/page?tab=settings&extra=1')).toBe(true);
+		});
+
+		it('requires all pattern params to match', () => {
+			expect(testURLPattern('/app/*\\?a=1&b=2', 'http://localhost/app/page?a=1&b=2')).toBe(true);
+			expect(testURLPattern('/app/*\\?a=1&b=2', 'http://localhost/app/page?a=1')).toBe(false);
+		});
+
+		it('param order in URL does not matter', () => {
+			expect(testURLPattern('/app/*\\?a=1&b=2', 'http://localhost/app/page?b=2&a=1')).toBe(true);
+		});
+	});
+
+	describe('wildcard search parameter value', () => {
+		it('* matches any non-empty value', () => {
+			expect(testURLPattern('/app/*?token=*', 'http://localhost/app/page?token=abc')).toBe(true);
+		});
+
+		it('* requires the param to be present', () => {
+			expect(testURLPattern('/app/*?token=*', 'http://localhost/app/page')).toBe(false);
+		});
+
+		it('prefix wildcard like aaa* is treated as a literal value', () => {
+			expect(testURLPattern('/app/*\\?q=aaa*', 'http://localhost/app/page?q=aaa*')).toBe(true);
+			expect(testURLPattern('/app/*\\?q=aaa*', 'http://localhost/app/page?q=aaabbb')).toBe(false);
+		});
+	});
+
+	describe('hash fragment', () => {
+		it('ignores hash when matching', () => {
+			expect(testURLPattern('/app/dashboard', 'http://localhost/app/dashboard#section')).toBe(true);
+		});
 	});
 });
 

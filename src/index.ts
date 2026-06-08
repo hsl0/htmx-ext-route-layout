@@ -67,15 +67,17 @@ function processHXDefault<E extends Element>(
 		.forEach((el) => setDefaultTarget(el, target));
 }
 
-function testURLPattern(pattern: string, url: string): boolean {
+export function testURLPattern(pattern: string, url: string): boolean {
 	const patternURL = new URL(pattern, location.href);
-	const patternObj = new URLPattern(
-		decodeURIComponent(patternURL.pathname),
-		location.href,
-	);
+	const primitivePatternObj = new URLPattern(pattern, location.href);
+	const patternObj = new URLPattern({
+		protocol: location.protocol,
+		port: location.port,
+		hostname: location.hostname,
+		pathname: primitivePatternObj.pathname,
+		baseURL: location.href,
+	});
 	const urlObj = new URL(url, location.href);
-
-	if (patternURL.origin !== location.origin) return false;
 
 	for (const [key, value] of patternURL.searchParams.entries()) {
 		if (value === '*') return urlObj.searchParams.has(key);
