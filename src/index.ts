@@ -69,7 +69,10 @@ function processHXDefault<E extends Element>(
 
 function testURLPattern(pattern: string, url: string): boolean {
 	const patternURL = new URL(pattern, location.href);
-	const patternObj = new URLPattern(patternURL.pathname, location.href);
+	const patternObj = new URLPattern(
+		decodeURIComponent(patternURL.pathname),
+		location.href,
+	);
 	const urlObj = new URL(url, location.href);
 
 	if (patternURL.origin !== location.origin) return false;
