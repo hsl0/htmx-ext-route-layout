@@ -35,7 +35,7 @@ export function setDefaultTarget<E extends Element>(el: E, target: string) {
 	}
 
 	if (!el.hasAttribute('hx-select')) {
-		el.setAttribute('hx-select', target);
+		el.setAttribute('hx-select', el.getAttribute('hx-target') || target);
 	} else if (el.getAttribute('hx-select') === '*') {
 		el.setAttribute('hx-select', '');
 	}
