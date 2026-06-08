@@ -37,6 +37,7 @@ vi.mock('htmx.org', () => ({
 				capturedOnEvent = ext.onEvent;
 			},
 		),
+		process: vi.fn((el: Element) => {}),
 	},
 }));
 
