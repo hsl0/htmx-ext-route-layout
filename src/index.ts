@@ -151,6 +151,8 @@ export function processLayout(el: Element) {
 	processHXDefault(el, 'hx-put', route, outletSelector);
 	processHXDefault(el, 'hx-patch', route, outletSelector);
 	processHXDefault(el, 'hx-delete', route, outletSelector);
+
+	htmx.process(el);
 }
 
 function processClassActive(el: Element) {
@@ -167,6 +169,8 @@ function processClassActive(el: Element) {
 	} else {
 		el.classList.remove(activeClass);
 	}
+
+	htmx.process(el);
 }
 
 export function urlEquals(a: string, b: string) {
